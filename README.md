@@ -1,27 +1,52 @@
-# AngularWeb
+# Angular Blog Web App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.3.
+This is a simple blog web application built with **Angular 10.2.3** and powered by a **Laravel API backend**. It demonstrates full **CRUD operations** with features such as form handling, image upload, and API integration.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## 🚀 Features
 
-## Code scaffolding
+- Fetch blog list using Laravel API
+- Display blog data using Bootstrap cards
+- Create a blog with multiple image uploads
+- Update blog data and upload new images
+- Delete a blog post
+- Delete individual images from a blog post
+- Reactive form validation and error handling
+- Modular code with Angular best practices
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+---
 
-## Build
+## 🧰 Technologies Used
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+| Frontend            | Description                       |
+| ------------------- | --------------------------------- |
+| Angular 10.2.3      | Frontend framework                |
+| Bootstrap 5         | UI styling and layout             |
+| HttpClientModule    | For API communication             |
+| ReactiveFormsModule | For building and validating forms |
 
-## Running unit tests
+| Backend               | Description                                                   |
+| --------------------- | ------------------------------------------------------------- |
+| Laravel               | RESTful API for blogs and image handling                      |
+| MySQL                 | Database for storing blog content and images                  |
+| Laravel Storage       | Stores uploaded images via `storage/app/public/uploads/blogs` |
+| Laravel Form Requests | Request validation with custom rules                          |
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## 📦 Installation
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Prerequisites
 
-## Further help
+- Node.js & npm
+- Angular
+- Laravel API backend running at `http://localhost:8000`
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Clone the project
+
+```bash
+git clone https://github.com/hamzashaikh-growexxer/blog-web-fe
+cd AngularWeb
+npm install
+```
