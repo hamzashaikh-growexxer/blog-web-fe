@@ -50,3 +50,11 @@ git clone https://github.com/hamzashaikh-growexxer/blog-web-fe
 cd AngularWeb
 npm install
 ```
+
+### Development Server
+
+```bash
+ng serve
+http://localhost:4200
+
+```
