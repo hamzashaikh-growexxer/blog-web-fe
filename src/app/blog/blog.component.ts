@@ -99,6 +99,8 @@ export class BlogComponent implements OnInit {
         .subscribe(() => {
           this.blogs = this.blogs.filter((blog) => blog.id !== id);
         });
+      this.blogForm.reset();
+      this.existingImages = [];
     }
   }
 
