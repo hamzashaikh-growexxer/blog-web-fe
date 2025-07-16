@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { BlogService } from '../services/blog.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -13,7 +13,7 @@ export class BlogComponent implements OnInit {
   existingImages: any[] = [];
   selectedFiles: File[] = [];
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {}
+  constructor(private blogService: BlogService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.blogForm = this.fb.group({
@@ -27,7 +27,7 @@ export class BlogComponent implements OnInit {
   }
 
   loadBlogs(): void {
-    this.http.get<any>('http://localhost:8000/api/blogs').subscribe((res) => {
+    this.blogService.getBlogs().subscribe((res) => {
       this.blogs = res.data;
     });
   }
@@ -69,65 +69,52 @@ export class BlogComponent implements OnInit {
     const blogId = this.blogForm.value.id;
 
     if (blogId) {
-      this.http
-        .post<any>(
-          `http://localhost:8000/api/blogs/${blogId}?_method=PUT`,
-          formData
-        )
-        .subscribe((response) => {
-          alert('Blog updated successfully!');
-          this.loadBlogs();
-          this.selectedFiles = [];
-          this.existingImages = [];
-        });
+      this.blogService.updateBlog(blogId, formData).subscribe(() => {
+        alert('Blog updated successfully!');
+        this.loadBlogs();
+        this.selectedFiles = [];
+        this.existingImages = [];
+      });
     } else {
-      this.http
-        .post<any>('http://localhost:8000/api/blogs', formData)
-        .subscribe((response) => {
-          alert('Blog created successfully!');
-          this.blogs.push(response.data);
-          this.selectedFiles = [];
-        });
+      this.blogService.createBlog(formData).subscribe((response) => {
+        alert('Blog created successfully!');
+        this.blogs.push(response.data);
+        this.selectedFiles = [];
+      });
     }
     this.blogForm.reset();
   }
 
   deleteBlog(id: number): void {
     if (confirm('Are you sure you want to delete this blog?')) {
-      this.http
-        .delete(`http://localhost:8000/api/blogs/${id}`)
-        .subscribe(() => {
-          this.blogs = this.blogs.filter((blog) => blog.id !== id);
-        });
-      this.blogForm.reset();
-      this.existingImages = [];
+      this.blogService.deleteBlog(id).subscribe(() => {
+        this.blogs = this.blogs.filter((blog) => blog.id !== id);
+        this.blogForm.reset();
+        this.existingImages = [];
+      });
     }
   }
 
   deleteImage(imageId: number): void {
     if (confirm('Are you sure you want to remove this image?')) {
-      this.http
-        .delete(`http://localhost:8000/api/blog-images/${imageId}`)
-        .subscribe(() => {
-          this.existingImages = this.existingImages.filter(
-            (img) => img.id !== imageId
-          );
-        });
+      this.blogService.deleteImage(imageId).subscribe(() => {
+        this.existingImages = this.existingImages.filter(
+          (img) => img.id !== imageId
+        );
+      });
     }
   }
 
   editBlog(id: number): void {
-    this.http
-      .get<any>(`http://localhost:8000/api/blogs/${id}`)
-      .subscribe((res) => {
-        const blog = res.data;
-        this.blogForm.patchValue({
-          id: blog.id,
-          title: blog.title,
-          content: blog.content,
-          image: '',
-        });
-        this.existingImages = blog.images;
+    this.blogService.getBlog(id).subscribe((res) => {
+      const blog = res.data;
+      this.blogForm.patchValue({
+        id: blog.id,
+        title: blog.title,
+        content: blog.content,
+        image: '',
       });
+      this.existingImages = blog.images;
+    });
   }
 }
