@@ -1,6 +1,7 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Blog List</h2>
+    <a routerLink="/blog/create" class="btn btn-success mb-4">+ Add Blog</a>
 
   </div>
 
@@ -13,7 +14,8 @@
             <p class="card-text">{{ blog.content }}</p>
           </div>
           <div>
-            <button class="btn btn-sm btn-primary me-2" (click)="editBlog(blog.id)">Edit</button>
+            <button class="btn btn-sm btn-primary me-2" [routerLink]="['/blog/edit', blog.id]">Edit</button>
+
             <button class="btn btn-sm btn-danger" (click)="deleteBlog(blog.id)">Delete</button>
           </div>
         </div>
@@ -23,62 +25,6 @@
     </div>
   </div>
 
-    <div class="card mt-5">
-    <div class="card-header">
-      <h4>{{ blogForm.value.id ? 'Edit Blog' : 'Create Blog' }}</h4>
-    </div>
-    <div class="card-body">
-      <form [formGroup]="blogForm" (ngSubmit)="submitBlog()">
-        <div class="mb-3">
-          <label for="title" class="form-label">Title</label>
-          <input
-            type="text"
-            id="title"
-            class="form-control"
-            formControlName="title"
-            [class.is-invalid]="blogForm.get('title')?.invalid && blogForm.get('title')?.touched"
-          />
-          <div class="invalid-feedback" *ngIf="blogForm.get('title')?.invalid && blogForm.get('title')?.touched">
-            Title is required.
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="content" class="form-label">Content</label>
-          <textarea
-            id="content"
-            rows="4"
-            class="form-control"
-            formControlName="content"
-            [class.is-invalid]="blogForm.get('content')?.invalid && blogForm.get('content')?.touched"
-          ></textarea>
-          <div class="invalid-feedback" *ngIf="blogForm.get('content')?.invalid && blogForm.get('content')?.touched">
-            Content is required.
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="image" class="form-label">Image</label>
-          <input type="file" id="image" class="form-control" (change)="onFileChange($event)" formControlName="image" multiple/>
-        </div>
-        <div *ngIf="existingImages.length > 0" class="mb-3">
-        <label class="form-label">Existing Images</label>
-        <div class="d-flex flex-wrap gap-3">
-          <div *ngFor="let image of existingImages" class="position-relative">
-            <img [src]="'http://localhost:8000/storage/' + image.image_path" alt="Blog Image" width="150" class="img-thumbnail" />
-            <button type="button" class="btn-close position-absolute top-0 end-0" aria-label="Close"
-              (click)="deleteImage(image.id)"></button>
-          </div>
-        </div>
-      </div>
-
-
-        <button type="submit" class="btn btn-success" [disabled]="blogForm.invalid">
-          {{ blogForm.value.id ? 'Update' : 'Submit' }}
-        </button>
-      </form>
-    </div>
-  </div>
 
 
   <ng-template #noBlogs>

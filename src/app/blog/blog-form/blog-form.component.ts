@@ -1,0 +1,98 @@
+// blog-form.component.ts
+import { Component, OnInit } from '@angular/core';
+import { BlogService } from '../../services/blog.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
+@Component({
+  selector: 'app-blog-form',
+  templateUrl: './blog-form.component.html',
+  styleUrls: ['./blog-form.component.scss'],
+})
+export class BlogFormComponent implements OnInit {
+  blogForm: FormGroup;
+  selectedFiles: File[] = [];
+  existingImages: any[] = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private blogService: BlogService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
+
+  ngOnInit(): void {
+    this.blogForm = this.fb.group({
+      id: [''],
+      title: ['', Validators.required],
+      content: ['', Validators.required],
+      image: [''],
+    });
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.blogService.getBlog(+id).subscribe((res) => {
+        const blog = res.data;
+        this.blogForm.patchValue(blog);
+        this.existingImages = blog.images;
+      });
+    }
+  }
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      const validTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/jpg',
+      ];
+      const files = Array.from(input.files).filter((file) =>
+        validTypes.includes(file.type)
+      );
+      this.selectedFiles = files;
+    }
+  }
+
+  submitBlog(): void {
+    if (this.blogForm.invalid) return;
+
+    const formData = new FormData();
+    formData.append('title', this.blogForm.value.title);
+    formData.append('content', this.blogForm.value.content);
+
+    for (let file of this.selectedFiles) {
+      formData.append('images[]', file);
+    }
+
+    const blogId = this.blogForm.value.id;
+    const isUpdate = !!blogId;
+
+    const request = isUpdate
+      ? this.blogService.updateBlog(blogId, formData)
+      : this.blogService.createBlog(formData);
+
+    request.subscribe(() => {
+      const message = isUpdate
+        ? 'Blog updated successfully!'
+        : 'Blog created successfully!';
+      this.toastr.success(message);
+      this.router.navigate(['/blog']);
+    });
+  }
+
+  deleteImage(imageId: number): void {
+    if (confirm('Are you sure you want to delete this image?')) {
+      this.blogService.deleteImage(imageId).subscribe(() => {
+        this.existingImages = this.existingImages.filter(
+          (img) => img.id !== imageId
+        );
+        this.toastr.success('Image deleted successfully!', 'Success');
+      });
+    }
+  }
+}
