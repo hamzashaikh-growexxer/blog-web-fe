@@ -26,8 +26,22 @@ export class BlogFormComponent implements OnInit {
   ngOnInit(): void {
     this.blogForm = this.fb.group({
       id: [''],
-      title: ['', Validators.required],
-      content: ['', Validators.required],
+      title: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(150),
+          Validators.pattern(/^[a-zA-Z0-9\s.,'"!?()-]+$/),
+        ],
+      ],
+      content: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(5000),
+          Validators.pattern(/^[a-zA-Z0-9\s.,'"!?()-]+$/),
+        ],
+      ],
       image: [''],
     });
 
@@ -44,13 +58,7 @@ export class BlogFormComponent implements OnInit {
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      const validTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
-        'image/jpg',
-      ];
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
       const files = Array.from(input.files).filter((file) =>
         validTypes.includes(file.type)
       );
