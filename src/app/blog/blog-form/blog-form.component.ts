@@ -3,6 +3,7 @@ import { BlogService } from '../../services/blog.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-blog-form',
@@ -13,6 +14,7 @@ export class BlogFormComponent implements OnInit {
   blogForm: FormGroup;
   selectedFiles: File[] = [];
   existingImages: any[] = [];
+  storageUrl = environment.storageUrl;
 
   constructor(
     private fb: FormBuilder,
