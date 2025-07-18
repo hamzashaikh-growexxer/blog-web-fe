@@ -83,12 +83,30 @@ export class BlogFormComponent implements OnInit {
       ? this.blogService.updateBlog(blogId, formData)
       : this.blogService.createBlog(formData);
 
-    request.subscribe(() => {
-      const message = isUpdate
-        ? 'Blog updated successfully!'
-        : 'Blog created successfully!';
-      this.toastr.success(message);
-      this.router.navigate(['/blog']);
+    request.subscribe({
+      next: () => {
+        const message = isUpdate
+          ? 'Blog updated successfully!'
+          : 'Blog created successfully!';
+        this.toastr.success(message);
+        this.router.navigate(['/blog']);
+      },
+      error: (error) => {
+        if (error.error?.errors) {
+          const validationErrors = error.error.errors;
+
+          const allMessages = Object.keys(validationErrors)
+            .reduce((acc: string[], field) => {
+              return acc.concat(validationErrors[field]);
+            }, [])
+            .join('\n');
+          this.toastr.error(allMessages, 'Validation Error');
+        } else {
+          const message =
+            error.error?.message || 'An error occurred. Please try again.';
+          this.toastr.error(message, `Error ${error.status}`);
+        }
+      },
     });
   }
 
